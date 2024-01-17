@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const isAuth = useSelector(selectIsAuth);
@@ -25,9 +25,21 @@ export const Login = () => {
     },
     mode: "onChange",
   });
-  const onSubmit = (values) => {
-    dispatch(fetchAuth(values));
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchAuth(values));
+
+    if (!data.payload) {
+      return alert("Failed to login");
+    }
+    if ("token" in data.payload) {
+      window.localStorage.setItem("token", data.payload.token);
+    }
   };
+
+  if (isAuth) {
+    return <Navigate to="/" />;
+  }
+
   console.log("isAuth", isAuth);
   return (
     <Paper classes={{ root: styles.root }}>
