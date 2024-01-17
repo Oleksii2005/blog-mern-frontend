@@ -7,7 +7,11 @@ import Avatar from "@mui/material/Avatar";
 
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
+import {
+  fetchAuth,
+  fetchRegister,
+  selectIsAuth,
+} from "../../redux/slices/auth";
 import { useForm } from "react-hook-form";
 import { Navigate } from "react-router-dom";
 
@@ -30,10 +34,10 @@ export const Registration = () => {
   });
 
   const onSubmit = async (values) => {
-    const data = await dispatch(fetchAuth(values));
+    const data = await dispatch(fetchRegister(values));
 
     if (!data.payload) {
-      return alert("Failed to login");
+      return alert("Failed to registrate");
     }
     if ("token" in data.payload) {
       window.localStorage.setItem("token", data.payload.token);
@@ -79,7 +83,13 @@ export const Registration = () => {
           label="Пароль"
           fullWidth
         />
-        <Button type="submit" size="large" variant="contained" fullWidth>
+        <Button
+          disabled={!isValid}
+          type="submit"
+          size="large"
+          variant="contained"
+          fullWidth
+        >
           Зарегистрироваться
         </Button>
       </form>
